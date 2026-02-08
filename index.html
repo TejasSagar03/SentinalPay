@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html ng-app="loanApp">
+<head>
+  <meta charset="UTF-8">
+  <title>SentinalPay</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body ng-controller="LoanController">
+
+<header>
+  <div class="logo">🛡 SentinalPay</div>
+</header>
+
+<!-- PAGE 1 -->
+<section class="welcome" ng-if="step==0">
+  <h1>Smarter Loans.<br>Instant Decisions.</h1>
+  <p>Real-time eligibility & AI-style advisory</p>
+  <button class="cta" ng-click="next()">Start Now</button>
+</section>
+
+<!-- PAGE 2 -->
+<section class="form-page" ng-if="step==1">
+
+  <h2>Enter Your Financial Details</h2>
+
+  <!-- PRESETS -->
+  <div class="presets">
+    <button ng-click="applyPreset('middle')">Middle Class</button>
+    <button ng-click="applyPreset('aggressive')">Aggressive</button>
+    <button ng-click="applyPreset('safe')">Safe</button>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <label>Monthly Salary</label>
+      <div class="value">₹ {{profile.salary | number}}</div>
+      <input type="range" min="10000" max="300000" step="1000"
+             ng-model="profile.salary" ng-change="playTick()">
+
+      <label>Existing EMIs</label>
+      <div class="value">₹ {{profile.otherEmi | number}}</div>
+      <input type="range" min="0" max="100000" step="500"
+             ng-model="profile.otherEmi" ng-change="playTick()">
+
+      <label>Credit Score</label>
+      <div class="value">{{profile.credit}}</div>
+      <input type="range" min="300" max="900" step="10"
+             ng-model="profile.credit" ng-change="playTick()">
+    </div>
+
+    <div class="card">
+      <label>Loan Amount</label>
+      <div class="value">₹ {{loan.amount | number}}</div>
+      <input type="range" min="100000" max="5000000" step="50000"
+             ng-model="loan.amount" ng-change="playTick()">
+
+      <label>Interest %</label>
+      <div class="value">{{loan.rate}}%</div>
+      <input type="range" min="6" max="20" step="0.1"
+             ng-model="loan.rate" ng-change="playTick()">
+
+      <label>Tenure</label>
+      <div class="value">{{loan.tenure}} years</div>
+      <input type="range" min="1" max="30"
+             ng-model="loan.tenure" ng-change="playTick()">
+    </div>
+
+  </div>
+
+  <div class="live-emi">
+    Live EMI: ₹ {{liveEmi()}}
+  </div>
+
+  <button class="cta" ng-click="analyze()">Analyze</button>
+</section>
+
+<!-- PAGE 3 -->
+<section class="loading" ng-if="step==2">
+  <div class="pulse"></div>
+  <p>SentinalPay is evaluating your profile...</p>
+</section>
+
+<!-- PAGE 4 -->
+<section class="result" ng-if="step==3">
+
+  <div class="result-card"
+       ng-class="result.statusClass"
+       ng-mousemove="drag($event)">
+
+    <h1>{{result.status}}</h1>
+    <h2>₹ {{counter.emi}}</h2>
+    <p>Monthly EMI</p>
+  </div>
+
+  <div class="stats">
+    <div>
+      Approval Chance
+      <b ng-class="getProbClass()">{{probability}}%</b>
+    </div>
+    <div>Interest ₹ <b>{{counter.interest}}</b></div>
+    <div>FOIR <b>{{result.foir}}%</b></div>
+  </div>
+
+  <button class="cta" ng-click="restart()">New Check</button>
+
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
